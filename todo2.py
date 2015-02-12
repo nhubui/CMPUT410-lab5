@@ -6,7 +6,6 @@ DATABASE= 'test.db'
 USERNAME = 'admin'
 PASSWORD = 'admin'
 SECRET_KEY = 'this is secret!'
-ID = 1
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -23,9 +22,7 @@ def task():
         category = request.form['category']
         priority = request.form['priority']
         description = request.form['description']
-        app.config['ID'] += 1
-        uniqueId= app.config['ID'] 
-        addTask(category, priority, description,uniqueId)
+        addTask(category, priority, description)
         flash('New task added successfully!')
         return redirect(url_for('task'))
     return render_template('show_entries.html', tasks=query_db('select * from tasks'))
@@ -58,8 +55,8 @@ def delete():
     flash('Task was deleted successfully')
     return redirect(url_for('task'))
 
-def addTask(category, priority, description, uniqueID):
-    query_db('insert into tasks values(?, ?, ?,?)', [category, int(priority),description, uniqueID], one=True)
+def addTask(category, priority, description):
+    query_db('insert into tasks values(NULL, ?, ?,?)', [category, int(priority),description], one=True)
     get_db().commit()
 
 
